@@ -16,7 +16,7 @@ class EstanteCrud {
     int id = await db.update(
       "estantes",
       estante.toMap(),
-      where: "id",
+      where: "id = ?",
       whereArgs: [estante.id],
     );
     return id;
