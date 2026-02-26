@@ -3,12 +3,14 @@ class Producto {
   int? id;
   String nombre;
   int cantidad;
+  String medida;
   int estanteId;
 
   Producto({
     this.id,
     required this.nombre,
     required this.cantidad,
+    required this.medida,
     required this.estanteId,
   });
 
@@ -18,6 +20,7 @@ class Producto {
       'id': id,
       'nombre': nombre,
       'cantidad': cantidad,
+      'medida': medida,
       'estanteId': estanteId,
     };
   }
@@ -28,6 +31,7 @@ class Producto {
       id: map['id'],
       nombre: map['nombre'] ?? '',
       cantidad: map['cantidad'] ?? 1,
+      medida: map['medida'] ?? 'Ud',
       estanteId: map['estanteId'],
     );
   }

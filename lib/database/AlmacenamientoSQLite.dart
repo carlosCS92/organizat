@@ -56,6 +56,7 @@ class AlmacenamientoSQLite {
             estanteId INTEGER NOT NULL,
             nombre TEXT NOT NULL,
             cantidad INTEGER NOT NULL,
+            medida TEXT NOT NULL,
             FOREIGN KEY (estanteId) REFERENCES estantes(id) ON DELETE CASCADE
           )
         ''');

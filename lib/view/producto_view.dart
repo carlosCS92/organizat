@@ -26,6 +26,9 @@ class _ProductoviewState extends State<Productoview> {
   late TextEditingController _controllerProducto;
   late TextEditingController _controllerCantidad;
 
+  String? _medidaSeleccionada = 'Ud';
+  List<String> _opcionesMedida = ['Ud', 'Kg', 'g'];
+
   @override
   void initState() {
     super.initState();
@@ -46,6 +49,7 @@ class _ProductoviewState extends State<Productoview> {
       Producto p = Producto(
         nombre: _controllerProducto.text.toUpperCase(),
         cantidad: int.tryParse(_controllerCantidad.text)!,
+        medida: _medidaSeleccionada!,
         estanteId: widget.estante.id!,
       );
       int id = await ProductoCrud.agregarProducto(p);
@@ -111,6 +115,7 @@ class _ProductoviewState extends State<Productoview> {
               ),
               SizedBox(width: 8),
               Expanded(
+                flex: 2,
                 child: TextField(
                   style: TextStyle(color: Colors.black),
                   controller: _controllerCantidad,
@@ -120,24 +125,55 @@ class _ProductoviewState extends State<Productoview> {
                 ),
               ),
               SizedBox(width: 8),
-              FloatingActionButton(
-                onPressed: () {
-                  if (_controllerProducto.text.isEmpty) {
-                    Utils.showBannerError(
-                      context,
-                      "El producto no puede ser vacío",
+              Expanded(
+                flex: 2,
+                child: // Ejemplo básico de DropdownButton
+                DropdownButtonFormField<String>(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding: EdgeInsets.all(16),
+                  ),
+                  initialValue: _medidaSeleccionada,
+                  items: _opcionesMedida.map((String opcion) {
+                    return DropdownMenuItem<String>(
+                      value: opcion,
+                      child: Text(opcion),
                     );
-                  } else if ((int.tryParse(_controllerCantidad.text) ?? 0) <
-                      1) {
-                    Utils.showBannerError(
-                      context,
-                      "La cantidad tiene que ser mayor que 0",
-                    );
-                  } else {
-                    agregarProducto();
-                  }
-                },
-                child: Icon(Icons.add),
+                  }).toList(),
+                  onChanged: (String? nuevoValor) {
+                    setState(() {
+                      _medidaSeleccionada = nuevoValor;
+                    });
+                  },
+                ),
+              ),
+              SizedBox(width: 8),
+              SizedBox(
+                height: 48,
+                width: 48,
+                child: FloatingActionButton(
+                  onPressed: () {
+                    if (_controllerProducto.text.isEmpty) {
+                      Utils.showBannerError(
+                        context,
+                        "El producto no puede ser vacío",
+                      );
+                    } else if ((int.tryParse(_controllerCantidad.text) ?? 0) <
+                        1) {
+                      Utils.showBannerError(
+                        context,
+                        "La cantidad tiene que ser mayor que 0",
+                      );
+                    } else {
+                      agregarProducto();
+                    }
+                  },
+                  child: Icon(Icons.add),
+                ),
               ),
               SizedBox(width: 8),
             ],
@@ -151,9 +187,7 @@ class _ProductoviewState extends State<Productoview> {
                       Producto producto = productos[index];
                       return Card(
                         //Si la cantidad es menor o igual que 3, se muestra en rojo para avisar de que quedan pocas unidades del producto
-                        color: producto.cantidad <= 3
-                            ? Colors.red[200]
-                            : Colors.teal[100],
+                        color: Colors.teal[100],
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 12,
@@ -164,7 +198,7 @@ class _ProductoviewState extends State<Productoview> {
                               /// 🔹 NOMBRE (ocupa el espacio restante)
                               Expanded(
                                 child: Text(
-                                  producto.nombre,
+                                  "${producto.nombre} (${producto.medida})",
 
                                   style: const TextStyle(
                                     fontSize: 16,
